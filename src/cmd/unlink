@@ -10,7 +10,9 @@ sfp_name=${sfproject[0]}
 sfp_version=${sfproject[1]}
 # ------ CODE ------
 
-rm -fr "$PWD/$COMPILE_FOLDER"
+rm -fr "$BIN_PATH/$sfp_name"
+rm -fr "$INSTALATION_PATH/$sfp_name"
+# echo "$BIN_PATH/$sfp_name"
+# echo "$INSTALATION_PATH/$sfp_name"
 
-sconsole -a "Clean successfuly"
-
+sconsole -a "Unlink succeded"

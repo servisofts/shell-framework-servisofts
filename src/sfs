@@ -66,6 +66,7 @@ run_commands() {
 
 run_options() {
     local pos=$2
+
     # cantidad_parametros=$((${#PARAMS[@]} - $pos))
     local array_keys=$(JSON ${1} keys)
     local BRANCH_REGEX="-(.*)?\{"
@@ -75,6 +76,7 @@ run_options() {
 
     for ((c = $pos; c <= ${#PARAMS[@]}; c++)); do
         local param=${PARAMS[c]}
+        # sconsole -g "continuo el param $PARAMS"
         if [ -s "$param" ]; then
             continue
         fi
@@ -91,12 +93,17 @@ run_options() {
         fi
         for key in $array_keys; do
             command=" "
+
             local value=$(JSON $1 get $key)
+
             if [[ $key =~ $BRANCH_REGEX ]]; then
+
                 command=$(echo $key | perl -nle "m/(.*)?[{]/; print \$1; ")
                 file=$(echo $key | perl -nle "m/.*?[{](.*)?[}]/; print \$1; ")
             fi
-
+            # sconsole -g "$c"
+            # sconsole -g "$key"
+            # sconsole -g "$param"
             if [[ $param = $key ]]; then
                 $value
             fi
@@ -109,8 +116,12 @@ run_options() {
     done
 
     if [ ! -s $pending ]; then
-        sconsole -e "Se esperan $((${pending[0]} + 1)) parametros mas en ${pending[2]}"
-        exit
+        # sconsole -e "Se esperan $((${pending[0]} + 1)) parametros mas en ${pending[2]}"
+        value=${pending[3]}
+        $value ${pending_params[*]}
+        pending=""
+        pending_params=()
+        # exit
     fi
 }
 export_module() {
@@ -123,9 +134,10 @@ export_module() {
         class_name=$(echo ${class_name##/})
         class_name=$(echo ${class_name%%/})
     fi
-    IFS='/' read -ra ADDR <<<"$cur_path"
+
+    IFS='/' read -ra ADDR <<<"$class_name"
     n=$(echo ${#ADDR[*]})
-    n=$(($n - 2))
+    n=$(($n - 1))
     run_commands $1 $n
     run_options $2 $n
 }
@@ -140,8 +152,11 @@ include "shelp/index"
 JSON commands new
 JSON commands put "build" "cmd/build"
 JSON commands put "link" "cmd/link"
+JSON commands put "unlink" "cmd/unlink"
 JSON commands put "publish" "cmd/publish"
 JSON commands put "clean" "cmd/clean"
+JSON commands put "repo" "cmd/repo/index"
+JSON commands put "install" "cmd/install"
 JSON commands put "uninstall" "cmd/uninstall"
 
 JSON options new

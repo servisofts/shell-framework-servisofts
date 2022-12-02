@@ -1,0 +1,25 @@
+#!/bin/bash
+# export PATH=$PATH:"/Users/rickypazd/Documents/GitHub/shell-framework-servisofts/src"
+# ENV_FILE="../example.conf"
+source "sfs"
+
+JSON commands new
+JSON commands put "test" "test/index"
+
+JSON options new
+
+JSON options put "-h" "_help"
+JSON options put "--help" "_help"
+
+JSON options put "-v" "_version"
+JSON options put "--version" "_version"
+
+_help() {
+    shelp commands options
+}
+_version() {
+    sconsole "$NAME version $VERSION"
+    sfs -v
+}
+
+export_module commands options

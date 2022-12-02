@@ -1,0 +1,66 @@
+#!/bin/bash
+
+JSON commands new
+JSON options new
+
+export_module commands options
+
+# sfproject=($(_is_sfs_project $PWD))
+# sfp_path="$PWD"
+# sfp_name=${sfproject[0]}
+# sfp_version=${sfproject[1]}
+# ------ CODE ------
+
+IFS='@' read -ra ADDR <<<"${PARAMS[1]}"
+package_to_install=${ADDR[0]}
+version_to_install=${ADDR[1]}
+
+if [ -s $version_to_install ]; then
+    version_to_install="latest"
+fi
+
+name_version="$package_to_install@$version_to_install"
+sconsole -w $name_version
+
+include "cmd/repo/index"
+
+repo_path=$(_repo_find $package_to_install)
+
+if [ -s $repo_path ]; then
+    sconsole -e "Package [ $name_version ] not found!"
+    exit 0
+fi
+
+if [ $version_to_install = "latest" ]; then
+    package_vesions=($(_repo_list /$package_to_install/ | grep -s "$version_to_install" || :))
+else
+    package_vesions=($(_repo_list /$package_to_install/$version_to_install/ | grep -s "$version_to_install" || :))
+fi
+
+if [ -s $package_vesions ]; then
+    sconsole -e "Verion package [ $name_version ] not found!"
+    exit 0
+fi
+
+url_to_download_installer=""
+name_installer="$package_to_install-$version_to_install.installer"
+for key in ${package_vesions[@]}; do
+    IFS='=' read -ra ADDR <<<"${key}"
+    name=${ADDR[0]}
+    url=${ADDR[1]}
+    if [[ "$name" = "$name_installer" ]]; then
+        url_to_download_installer="$url"
+        continue
+    fi
+done
+
+sconsole -g "$url_to_download_installer"
+# mkdir -p "~/.cache/sfs/$package_to_install/"
+cd "/var/tmp/"
+mkdir -p "sfs"
+cd "sfs"
+curl -O -# $url_to_download_installer
+chmod +x $name_installer
+/bin/bash $name_installer
+rm $name_installer
+sconsole -a "El paquete fue instalado con exito."

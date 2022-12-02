@@ -2,6 +2,8 @@
 
 JSON commands new
 JSON options new
+
+JSON commands put "installer" "cmd/build_installer"
 export_module commands options
 
 sfproject=($(_is_sfs_project $PWD))

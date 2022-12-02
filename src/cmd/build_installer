@@ -1,0 +1,49 @@
+#!/bin/bash
+
+JSON commands new
+JSON options new
+export_module commands options
+
+sfproject=($(_is_sfs_project $PWD))
+sfp_path="$PWD"
+sfp_name=${sfproject[0]}
+sfp_version=${sfproject[1]}
+# ------ CODE ------
+
+sconsole -l "NAME =" $sfp_name
+sconsole -l "VERSION =" $sfp_version
+
+mkdir -p "$COMPILE_FOLDER"
+# mkdir -p "$COMPILE_FOLDER/$sfp_name"
+destino_installer="$COMPILE_FOLDER/$sfp_name-$sfp_version.installer"
+cat >"$destino_installer" <<EOT
+#!/usr/bin/env bash
+
+NAME=$sfp_name
+VERSION=$sfp_version
+PATH_TO_INSTALL=$INSTALATION_PATH
+BIN_PATH=$BIN_PATH
+REPOSITORY=$REPOSITORY
+NAME_TGZ="\$NAME-\$VERSION.tgz"
+
+curl -o "\$PATH_TO_INSTALL/\$NAME_TGZ" https://repo.servisofts.com/opt/\$NAME/\$VERSION/\$NAME_TGZ
+cd \$PATH_TO_INSTALL
+tar -xvf "\$NAME_TGZ"
+rm "\$PATH_TO_INSTALL/\$NAME_TGZ"
+rm \$BIN_PATH/\$NAME &>/dev/null
+
+name_temporal="\$PATH_TO_INSTALL/\${NAME}/\${NAME}___link___"
+
+cat >"\$name_temporal" <<EOF
+#!/usr/bin/env bash
+source "\$PATH_TO_INSTALL/\$NAME/\$NAME" \$@
+EOF
+
+chmod +x \$name_temporal
+ln -s \$name_temporal \$BIN_PATH/\$NAME
+
+echo "\$NAME installed successfuly!"
+EOT
+
+chmod +x $destino_installer
+sconsole -a "Build Installer successfuly $sfp_name-$sfp_version"

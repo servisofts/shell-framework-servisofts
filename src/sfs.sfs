@@ -1,4 +1,6 @@
-VERSION=1.0.1
+VERSION=1.0.4
 BIN_PATH="/usr/local/bin"
 COMPILE_FOLDER="target"
 INSTALATION_PATH="/opt"
+REPOSITORY="https://repo.servisofts.com"
+REPOSITORY_PATH_OPT="/opt"

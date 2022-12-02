@@ -8,11 +8,12 @@ RUN apk add perl
 RUN apk add --update curl
 RUN rm -rf /var/cache/apk/*
 
-ARG SKERNEL_VERSION=1.2.1
+ARG SFS_VERSION=1.0.4
 RUN cd /opt/ \
-    && curl -O https://repo.servisofts.com/opt/skernel/$SKERNEL_VERSION/skernel-$SKERNEL_VERSION.installer \
-    && bash skernel-$SKERNEL_VERSION.installer
+    && curl -O https://repo.servisofts.com/opt/sfs/$SFS_VERSION/sfs-$SFS_VERSION.installer \
+    && bash sfs-$SFS_VERSION.installer
 
+RUN sfs install example
 COPY . .
 
 CMD ["bash", "start.sh"]
