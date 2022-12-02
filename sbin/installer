@@ -1,0 +1,21 @@
+#!/bin/bash
+NAME="skernel"
+VERSION=1.2.1
+PATH_TO_INSTALL="/opt"
+BIN_PATH="/usr/local/bin"
+
+
+NAME_TGZ="$NAME-$VERSION.tgz"
+curl -o "$PATH_TO_INSTALL/$NAME_TGZ" https://repo.servisofts.com/opt/$NAME/$VERSION/$NAME_TGZ
+cd $PATH_TO_INSTALL
+tar -xvf "$NAME_TGZ"
+rm "$PATH_TO_INSTALL/$NAME_TGZ"
+rm $BIN_PATH/skernel &>/dev/null
+cat >$PATH_TO_INSTALL/skernel/skernel_link <<EOF
+#!/usr/bin/env bash
+source "$PATH_TO_INSTALL/skernel/skernel" \$@
+EOF
+chmod +x $PATH_TO_INSTALL/skernel/skernel_link
+ln -s $PATH_TO_INSTALL/skernel/skernel_link $BIN_PATH/skernel
+
+echo "$NAME installed successfuly!"

@@ -1,0 +1,168 @@
+#!/bin/bash
+
+DIR_PATH=$(dirname "$0")
+# DIR_PATH=$(echo ${BASH_SOURCE[2]})
+# echo "$@"
+for key in ${BASH_SOURCE[@]}; do
+    if [ $key = "/usr/local/bin/skernel" ]; then
+        continue
+    fi
+    DIR_PATH="$key"
+    DIR_PATH=$(echo ${DIR_PATH} | perl -nle 'm/(.*)?\/.*/; print $1')
+    # echo "$DIR_PATH"
+done
+
+#   VARIABLES GLOBALES QUE PUEDEN SER REMPLAZADAS
+NAME=""
+VERSION=1.0
+# ENV_FILE=""
+
+# COMPROVAMOS SI EXISTE LA ENVFILE y la importamos remplazando los valores
+. "$DIR_PATH/skernel.conf" &>/dev/null
+
+if [ ! -s $ENV_FILE ]; then
+    . "$DIR_PATH/$ENV_FILE"
+fi
+
+#   VARIABLES GLOBALES QUE NO PUEDEN SER REMPLAZADAS
+# DIR_PATH=$(dirname "$0")
+# DIR_PATH=$(echo ${BASH_SOURCE[0]} | perl -nle 'm/(.*)?\/skernel.*/; print $1')
+
+DIR_SKERNEL=$(echo ${BASH_SOURCE[0]} | perl -nle 'm/(.*)?\/skernel.*/; print $1')
+FOLDER_NAME=${PWD##*/}
+FOLDER_NAME=${FOLDER_NAME:-/} # to correct for the case where PWD=/
+PARAMS=("$@")
+PARAMS_STR=("$*")
+
+# CODE
+set -e
+include() {
+    source "${DIR_SKERNEL}/$1" $PARAMS
+}
+require() {
+    source "${DIR_PATH}/$1" $PARAMS
+}
+run_commands() {
+    local pos=$2
+    local arr=$PARAMS
+    # local val=(${PARAMS[pos]})
+    # echo "$pos"
+    local val=${PARAMS[pos]}
+    arr_temp=$(JSON ${1} keys)
+    for key in $arr_temp; do
+        obj=$(JSON $1 get $key)
+        name=$key
+        if [[ $name = $val ]]; then
+            require $obj
+            exit
+        fi
+    done
+}
+
+run_options() {
+    local pos=$2
+    # cantidad_parametros=$((${#PARAMS[@]} - $pos))
+    local array_keys=$(JSON ${1} keys)
+    local BRANCH_REGEX="-(.*)?\{"
+
+    local pending=""
+    local pending_params=()
+
+    for ((c = $pos; c <= ${#PARAMS[@]}; c++)); do
+        local param=${PARAMS[c]}
+        if [ -s "$param" ]; then
+            continue
+        fi
+        if [ ! -s $pending ]; then
+            pending_params[${pending[1]} - ${pending[0]}]="$param"
+            pending[0]=$((${pending[0]} - 1))
+            if [ ${pending[0]} = "-1" ]; then
+                value=${pending[3]}
+                $value ${pending_params[*]}
+                pending=""
+                pending_params=()
+            fi
+            continue
+        fi
+        for key in $array_keys; do
+            command=" "
+            local value=$(JSON $1 get $key)
+            if [[ $key =~ $BRANCH_REGEX ]]; then
+                command=$(echo $key | perl -nle "m/(.*)?[{]/; print \$1; ")
+                file=$(echo $key | perl -nle "m/.*?[{](.*)?[}]/; print \$1; ")
+                # echo "$command"
+                # echo "$file"
+            fi
+
+            if [[ $param = $key ]]; then
+                $value
+            fi
+            if [[ "$param" = "$command" ]]; then
+                pending=("$file" "$file" "$command" "$value")
+                # echo ${pending[*]}
+                continue
+            fi
+
+        done
+        # echo "$param"
+    done
+
+    if [ ! -s $pending ]; then
+        sconsole -e "Se esperan $((${pending[0]} + 1)) parametros mas en ${pending[2]}"
+        exit
+    fi
+}
+skernel_register_module() {
+
+    cur_path=$(echo ${BASH_SOURCE[1]/$DIR_PATH/""})
+    class_name=$(echo ${BASH_SOURCE[1]##*/})
+    if [ "$class_name" = "index" ]; then
+        class_name=$(echo ${BASH_SOURCE[1]/$DIR_PATH/""})
+        class_name=$(echo ${class_name//"index"/""})
+        class_name=$(echo ${class_name##/})
+        class_name=$(echo ${class_name%%/})
+    fi
+    IFS='/' read -ra ADDR <<<"$cur_path"
+    n=$(echo ${#ADDR[*]})
+    n=$(($n - 2))
+    run_commands $1 $n
+    run_options $2 $n
+}
+
+include "func/index"
+include "sconsole/index"
+include "JSON/index"
+include "shelp/index"
+
+JSON options new
+JSON options put "-h" "_help"
+JSON options put "-v" "_version"
+JSON options put "--version" "_version"
+
+_version() {
+    sconsole "skernel version $VERSION"
+    exit 0
+}
+_help() {
+    # sconsole "skernel help"
+    shelp commands options
+    exit 0
+}
+
+skernel_register_module commands options
+
+# _printenv
+
+# get_current_path() {
+#     # SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+#     echo ${BASH_SOURCE[0]}
+# }
+# source "$DIR_SKERNEL/func/index"
+
+# echo $DIR_SKERNEL
+# echo
+
+# IFS='/' read -ra ADDR <<< "$DIR_SKERNEL"
+# for i in "${ADDR[@]}"; do
+#   echo $i
+# done

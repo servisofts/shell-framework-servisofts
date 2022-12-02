@@ -1,0 +1,44 @@
+#!/bin/bash
+
+shelp() {
+    sconsole -w "Usage: $NAME [OPTIONS] [COMMANDS]".
+    sconsole -l "\t"
+    _shelp_print_options $@
+    _shelp_print_commands $@
+    sconsole -l "\t"
+    sconsole -l "Run '$NAME COMMAND --help' for more information on a command."
+    sconsole -l "\t"
+}
+
+_shelp_print_options() {
+    local array_keys_options=($(JSON ${2} keys))
+    cant=${#array_keys_options[@]}
+    sconsole "Options:"
+    description="asdada"
+    if [ ! $cant -eq 0 ]; then
+        for key in ${array_keys_options[@]}; do
+            obj=$(JSON ${2} get $key)
+            _paint_in_line $key $obj
+        done
+    fi
+}
+_shelp_print_commands() {
+    local array_keys_commands=($(JSON ${1} keys))
+    cant=${#array_keys_commands[@]}
+    if [ ! $cant -eq 0 ]; then
+        sconsole "Commands:"
+        for key in ${array_keys_commands[@]}; do
+            obj=$(JSON ${1} get $key)
+            _paint_in_line $key $obj
+        done
+    fi
+
+}
+
+_paint_in_line() {
+    size=${#2}
+    printf '%b' "\e${Green}"
+    printf '%-20s' "  $1"
+    printf '%b' "\e${Clean}"
+    printf "%-${size}s\n" "$2"
+}

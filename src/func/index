@@ -1,0 +1,29 @@
+#!/bin/bash
+
+include "func/config"
+
+replace() {
+    read txt
+    echo "$txt $1 $2"
+    res=$(echo $txt | perl -nle "m/(.*)?$1(.*)/; print \$1|$2|\$2; ")
+    echo "$res"
+    return
+}
+
+_printenv() {
+    _printenv_name "NAME"
+    _printenv_name "VERSION"
+    _printenv_name "DIR_PATH"
+    _printenv_name "DIR_SKERNEL"
+    _printenv_name "ENV_FILE"
+    _printenv_name "FOLDER_NAME"
+    _printenv_name "PARAMS_STR"
+}
+
+_printenv_name() {
+    echo "$1=${!1}"
+}
+
+# require() {
+#     source "${DIR_PATH}/src/$1" $PARAMS
+# }

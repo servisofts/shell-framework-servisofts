@@ -1,0 +1,9 @@
+#!/bin/bash
+NAME="skernel"
+PATH_TO_INSTALL="/opt/"
+BIN_PATH="/usr/local/bin"
+
+# rm $BIN_PATH/$NAME &>/dev/null
+# rm -fr "$PATH_TO_INSTALL/$NAME"
+# echo "$NAME removed successfuly!"
+sudo ln -s /Users/rickypazd/u01/CODIGOS/framework_de_dessarrollo_sh/src /opt/skernel

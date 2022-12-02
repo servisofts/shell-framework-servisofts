@@ -1,0 +1,8 @@
+#!/bin/bash
+NAME="skernel"
+PATH_TO_INSTALL="/opt/"
+BIN_PATH="/usr/local/bin"
+
+rm $BIN_PATH/$NAME &>/dev/null
+rm -fr "$PATH_TO_INSTALL/$NAME"
+echo "$NAME removed successfuly!"

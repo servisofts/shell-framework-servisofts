@@ -1,0 +1,16 @@
+#!/bin/bash
+DIR_PATH=$(dirname "$0")
+. "$DIR_PATH/sbin.conf"
+. "$DIR_PATH/../src/skernel.conf"
+
+source "$DIR_PATH/clean"
+
+nombre_destino="$TARGET_PATH/$NAME"
+rm -fr $TARGET_PATH
+mkdir $TARGET_PATH
+mkdir $nombre_destino
+
+cp -r ./src/* $nombre_destino
+
+cd $TARGET_PATH
+tar -czvf "$NAME-$VERSION.tgz" "./$NAME"

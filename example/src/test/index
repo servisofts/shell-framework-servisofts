@@ -1,0 +1,12 @@
+#!/bin/bash
+
+JSON commands new
+JSON commands put "compile" "test/compile/index"
+
+JSON options new
+JSON options put "-h" "_help"
+
+_help() {
+    shelp commands options
+}
+skernel_register_module commands options

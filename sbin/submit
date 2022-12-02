@@ -1,0 +1,17 @@
+#!/bin/bash
+DIR_PATH=$(dirname "$0")
+. "$DIR_PATH/sbin.conf"
+. "$DIR_PATH/../src/skernel.conf"
+
+source "$DIR_PATH/compile"
+destino="/opt/$NAME/$VERSION/$NAME-$VERSION.tgz"
+destino_installer="/opt/$NAME/$VERSION/$NAME-$VERSION.installer"
+origen="$TARGET_PATH/$NAME-$VERSION.tgz"
+# echo "$origen"
+# cd $DIR_PATH
+cd ..
+curl --request POST "https://repo.servisofts.com/up/" \
+    -F $destino=@"$origen" \
+    -F $destino_installer=@"$DIR_PATH/installer"
+
+echo "$destino is submited"

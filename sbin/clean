@@ -1,0 +1,6 @@
+#!/bin/bash
+
+DIR_PATH=$(dirname "$0")
+. "$DIR_PATH/sbin.conf"
+
+rm -fr $TARGET_PATH
