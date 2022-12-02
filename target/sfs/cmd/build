@@ -1,0 +1,33 @@
+#!/bin/bash
+
+JSON commands new
+JSON options new
+
+JSON commands put "installer" "cmd/build_installer"
+export_module commands options
+
+sfproject=($(_is_sfs_project $PWD))
+sfp_path="$PWD"
+sfp_name=${sfproject[0]}
+sfp_version=${sfproject[1]}
+# ------ CODE ------
+
+# sconsole -l "sfp_path=" $sfp_path
+sconsole -l "NAME =" $sfp_name
+sconsole -l "VERSION =" $sfp_version
+# sconsole -l "COMPILE_FOLDER=" $COMPILE_FOLDER
+
+mkdir -p "$COMPILE_FOLDER"
+mkdir -p "$COMPILE_FOLDER/$sfp_name"
+cp -r ./src/ "$COMPILE_FOLDER/$sfp_name/"
+cd $COMPILE_FOLDER
+tar -czvf "$sfp_name-$sfp_version.tgz" "./$sfp_name"
+cd ..
+# echo
+# echo ${sfproject[1]}
+
+# echo $PWD
+# echo $COMPILE_FOLDER
+sconsole -a "Build successfuly $sfp_name-$sfp_version"
+
+# _printenv

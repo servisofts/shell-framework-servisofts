@@ -1,0 +1,11 @@
+#!/bin/bash
+
+config_load() {
+    if [ ! -s $ENV_FILE ]; then
+        . "$DIR_PATH/$ENV_FILE"
+    fi
+}
+
+# SCRIPT_DIR=${BASH_SOURCE[0]}
+# echo "$SCRIPT_DIR"
+# get_current_path

@@ -24,7 +24,7 @@
 ## Estandar
 
 ```bash
-sudo cd /opt/ \ && sudo curl -O https://repo.servisofts.com/opt/sfs/sfs-latest.installer \ && sudo bash sfs-latest.installer
+cd /opt/ && sudo curl -O https://repo.servisofts.com/opt/sfs/sfs-latest.installer && sudo bash sfs-latest.installer
 ```
 
 ## Docker
