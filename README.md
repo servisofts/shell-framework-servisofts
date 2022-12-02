@@ -12,7 +12,7 @@
 
 ## STATICS
 - `DIR_PATH` Direccion absoluta del script.
-- `DIR_SKERNEL` Direccion absoluta del skernel.
+- `DIR_SFS` Direccion absoluta del skernel.
 - `FOLDER_NAME` Nombre del folder donde se ejecuto el script.
 - `PARAMS` Parametros de entrada tipo array.
 - `PARAMS_STR` Parametros de entrada tipo string.

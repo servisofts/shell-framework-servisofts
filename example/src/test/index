@@ -9,4 +9,4 @@ JSON options put "-h" "_help"
 _help() {
     shelp commands options
 }
-skernel_register_module commands options
+export_module commands options

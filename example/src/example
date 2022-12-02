@@ -1,7 +1,7 @@
 #!/bin/bash
-
-ENV_FILE="../example.conf"
-source "skernel"
+# export PATH=$PATH:"/Users/rickypazd/Documents/GitHub/shell-framework-servisofts/src"
+# ENV_FILE="../example.conf"
+source "sfs"
 
 JSON commands new
 JSON commands put "test" "test/index"
@@ -19,7 +19,7 @@ _help() {
 }
 _version() {
     sconsole "$NAME version $VERSION"
-    skernel -v
+    sfs -v
 }
 
-skernel_register_module commands options
+export_module commands options

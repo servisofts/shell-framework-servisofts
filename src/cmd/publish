@@ -1,0 +1,22 @@
+#!/bin/bash
+
+JSON commands new
+JSON options new
+export_module commands options
+
+sfproject=($(_is_sfs_project $PWD))
+sfp_path="$PWD"
+sfp_name=${sfproject[0]}
+sfp_version=${sfproject[1]}
+# ------ CODE ------
+
+require "cmd/build"
+
+name_version="$sfp_name-$sfp_version"
+to_path_in_server="/opt/$sfp_name/$sfp_version"
+
+curl --request POST "https://repo.servisofts.com/up/$to_path_in_server/" \
+    -F "$name_version.tgz"=@"$sfp_path/$COMPILE_FOLDER/$name_version.tgz"
+# -F $destino_installer=@"$DIR_PATH/installer"
+
+sconsole -a "Publish successfuly $sfp_name-$sfp_version"
