@@ -18,12 +18,12 @@ _help() {
     shelp commands options
 }
 _version() {
-    sconsole "$VERSION"
+    sconsole "$NAME version $VERSION"
     sfs -v
 }
 
 _ss(){
-    echo "Assdsa  ddddadas"
+    echo "Asadas"
 
 }
 export_module commands options

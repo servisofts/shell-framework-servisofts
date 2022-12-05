@@ -1,0 +1,57 @@
+#!/bin/bash
+
+JSON commands new
+JSON options new
+
+export_module commands options
+
+if [[ ! $2 ]]; then
+    sconsole -e "sfs create [NAME]. Param name Not found"
+    exit 0
+fi
+
+name="$2"
+echo "Creando proyecto SFS [ $name ]"
+mkdir $name
+cd $name
+
+cat >"README.md" <<EOF
+# sfs
+EOF
+
+mkdir "src"
+cd "src"
+
+cat >"$name.sfs" <<EOF
+VERSION=1.0.1
+EOF
+
+cat >"$name" <<EOF
+#!/bin/bash
+
+source "sfs"
+
+JSON commands new
+JSON commands put "test" "test/index"
+
+JSON options new
+
+JSON options put "-h" "_help"
+JSON options put "--help" "_help"
+
+JSON options put "-v" "_version"
+JSON options put "--version" "_version"
+
+_help() {
+    shelp commands options
+}
+_version() {
+    sconsole "\$NAME version \$VERSION"
+    sfs -v
+}
+
+export_module commands options
+
+EOF
+
+chmod +x "$name"

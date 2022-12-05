@@ -26,8 +26,6 @@ for key in ${BASH_SOURCE[@]}; do
 done
 #   VARIABLES GLOBALES QUE PUEDEN SER REMPLAZADAS
 # COMPROVAMOS SI EXISTE LA ENVFILE y la importamos remplazando los valores
-# echo $DIR_PATH
-# echo $NAME
 . "$DIR_PATH/$NAME.sfs" &>/dev/null
 # echo "$DIR_PATH/$NAME.sfs"
 if [ ! -s $ENV_FILE ]; then
@@ -45,10 +43,10 @@ PARAMS_STR=("$*")
 # CODE
 set -e
 include() {
-    source "${DIR_SFS}/$1" $PARAMS
+    source "${DIR_SFS}/$1" ${PARAMS[*]}
 }
 require() {
-    source "${DIR_PATH}/$1" $PARAMS
+    source "${DIR_PATH}/$1" ${PARAMS[*]}
 }
 run_commands() {
     local pos=$2
@@ -152,7 +150,13 @@ include "sconsole/index"
 include "JSON/index"
 include "shelp/index"
 
+#!/bin/bash
+
 ### CLASS FUNCTIONALITY
+# echo $NAME
+if [[ ! $NAME == "sfs" ]]; then
+    return;
+fi
 
 JSON commands new
 JSON commands put "link" "cmd/link"
@@ -163,6 +167,7 @@ JSON commands put "repo" "cmd/repo/index"
 JSON commands put "install" "cmd/install"
 JSON commands put "uninstall" "cmd/uninstall"
 JSON commands put "build" "cmd/build/index"
+JSON commands put "create" "cmd/create"
 
 JSON options new
 JSON options put "-h" "_help"
@@ -191,6 +196,7 @@ _help() {
     JSON help_info put "cmd/publish" "--"
     JSON help_info put "cmd/repo/index" "--"
     JSON help_info put "cmd/uninstall" "--"
+    JSON help_info put "cmd/create" "Crea un nuevo projecto en el directorio donde nos encontramos."
 
     JSON help_info put "_help" "Muestra la ayuda."
     JSON help_info put "_version" "Muestra la version de $NAME."
