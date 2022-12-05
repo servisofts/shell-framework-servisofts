@@ -5,7 +5,7 @@ include "sconsole/color"
 
 sconsole() {
     local OPTIND option a
-    arr=${@:2}
+    local arr=${@:2}
     while getopts ":l:d:w:s:a:e:g:" option; do
         case $option in
         l) #Log
@@ -24,7 +24,12 @@ sconsole() {
             echo -e "${Green}${arr[@]}${Clean}"
             ;;
         g) #global
-            echo -e "${Cyan}${arr[@]}${Clean}" >&2
+            echo -e "${Cyan}${arr[*]}${Clean}" >&2
+            ;;
+        d) #debug
+            if [[ $DEBUG = true ]]; then
+                echo -e "${Yellow}[DEBUG]${Clean}${arr[@]}" >&2
+            fi
             ;;
         *) # display Help
             echo -e "${Clean}$*${Clean}"
@@ -32,5 +37,5 @@ sconsole() {
         esac
         return
     done
-    echo -e "${Clean}$*${Clean}"
+    echo -e "$*"
 }

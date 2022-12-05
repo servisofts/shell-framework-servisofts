@@ -3,8 +3,11 @@
 JSON commands new
 JSON options new
 
-JSON commands put "installer" "cmd/build_installer"
+JSON commands put "installer" "cmd/build/installer"
+
 export_module commands options
+
+_require_sudo $*
 
 sfproject=($(_is_sfs_project $PWD))
 sfp_path="$PWD"

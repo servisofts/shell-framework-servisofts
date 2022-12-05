@@ -1,0 +1,22 @@
+#!/bin/bash
+
+source "sfs"
+
+
+JSON jname new
+# jname='{"1-a":"1-aaasdasd","1-b":"1-b","1-c":{"2-a":"2-a"},"1-d":{"2-a":{},"2-b":2},asd:asd,"asdasd":1}'
+# jname='{"1":"a","2":"b"}'
+
+JSON jname put 'k1' 'v1'
+JSON jname put 'k1' 'v2'
+JSON jname put 'test' 't2'
+
+JSON jname pretty
+# JSON nombre_objeto get '"1-c"'
+
+# JSON nombre_objeto keys
+# JSON nombre_objeto values
+# echo $nombre_objeto
+# JSON nombre_objeto decompose
+# JSON nombre_objeto put "key" "valor"
+# echo $nombre_objeto

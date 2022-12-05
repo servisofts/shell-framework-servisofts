@@ -1,34 +1,35 @@
 #!/bin/bash
 
 me="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
-secname=$(echo ${me} | perl -nle 'm/(.*)?\___link____*/; print $1')
-if [ ! -s "$secname" ]; then
-    me=$secname
+if [[ "$me" == *"___link___"* ]]; then
+    me="${me//___link___/}"
 fi
 
 NAME="$me"
 VERSION=1.0.0
+DEBUG=true
 COMPILE_FOLDER="target"
 BIN_PATH="/usr/bin"
+BIN_LOCAL_PATH="/usr/local/bin"
 INSTALATION_PATH="/opt"
 
 DIR_PATH=$(dirname "$0")
 for key in ${BASH_SOURCE[@]}; do
-    # echo $key
-    # echo "/usr/local/bin/$NAME"
-    if [ "$key" = "$BIN_PATH/$NAME" ]; then
-        # echo "entro al continue"
+    if [[ $key == *"$BIN_PATH"* ]]; then
+        continue
+    fi
+    if [[ $key == *"$BIN_LOCAL_PATH"* ]]; then
         continue
     fi
     DIR_PATH="$key"
     DIR_PATH=$(echo ${DIR_PATH} | perl -nle 'm/(.*)?\/.*/; print $1')
 done
-
 #   VARIABLES GLOBALES QUE PUEDEN SER REMPLAZADAS
-
 # COMPROVAMOS SI EXISTE LA ENVFILE y la importamos remplazando los valores
+# echo $DIR_PATH
+# echo $NAME
 . "$DIR_PATH/$NAME.sfs" &>/dev/null
-
+# echo "$DIR_PATH/$NAME.sfs"
 if [ ! -s $ENV_FILE ]; then
     . "$DIR_PATH/$ENV_FILE"
 fi
@@ -55,9 +56,9 @@ run_commands() {
     local val=${PARAMS[pos]}
     arr_temp=$(JSON ${1} keys)
     for key in $arr_temp; do
-        obj=$(JSON $1 get $key)
         name=$key
         if [[ $name = $val ]]; then
+            obj=$(JSON $1 get $key)
             require $obj
             exit
         fi
@@ -69,17 +70,19 @@ run_options() {
 
     # cantidad_parametros=$((${#PARAMS[@]} - $pos))
     local array_keys=$(JSON ${1} keys)
+
     local BRANCH_REGEX="-(.*)?\{"
 
     local pending=""
     local pending_params=()
 
-    for ((c = $pos; c <= ${#PARAMS[@]}; c++)); do
+    for ((c = $pos; c < ${#PARAMS[@]}; c++)); do
         local param=${PARAMS[c]}
-        # sconsole -g "continuo el param $PARAMS"
+
         if [ -s "$param" ]; then
             continue
         fi
+
         if [ ! -s $pending ]; then
             pending_params[${pending[1]} - ${pending[0]}]="$param"
             pending[0]=$((${pending[0]} - 1))
@@ -91,23 +94,25 @@ run_options() {
             fi
             continue
         fi
-        for key in $array_keys; do
+        for _key in ${array_keys[@]}; do
+
             command=" "
+            # echo "$key"
+            # echo "$value"
 
-            local value=$(JSON $1 get $key)
+            if [[ $_key =~ $BRANCH_REGEX ]]; then
 
-            if [[ $key =~ $BRANCH_REGEX ]]; then
-
-                command=$(echo $key | perl -nle "m/(.*)?[{]/; print \$1; ")
-                file=$(echo $key | perl -nle "m/.*?[{](.*)?[}]/; print \$1; ")
+                command=$(echo $_key | perl -nle "m/(.*)?[{]/; print \$1; ")
+                file=$(echo $_key | perl -nle "m/.*?[{](.*)?[}]/; print \$1; ")
             fi
-            # sconsole -g "$c"
-            # sconsole -g "$key"
-            # sconsole -g "$param"
-            if [[ $param = $key ]]; then
+            if [[ $param = $_key ]]; then
+
+                value=$(JSON $1 get $_key)
                 $value
             fi
             if [[ "$param" = "$command" ]]; then
+
+                local value=$(JSON $1 get "$_key")
                 pending=("$file" "$file" "$command" "$value")
                 continue
             fi
@@ -116,7 +121,6 @@ run_options() {
     done
 
     if [ ! -s $pending ]; then
-        # sconsole -e "Se esperan $((${pending[0]} + 1)) parametros mas en ${pending[2]}"
         value=${pending[3]}
         $value ${pending_params[*]}
         pending=""
@@ -125,7 +129,6 @@ run_options() {
     fi
 }
 export_module() {
-
     cur_path=$(echo ${BASH_SOURCE[1]/$DIR_PATH/""})
     class_name=$(echo ${BASH_SOURCE[1]##*/})
     if [ "$class_name" = "index" ]; then
@@ -136,8 +139,10 @@ export_module() {
     fi
 
     IFS='/' read -ra ADDR <<<"$class_name"
+
     n=$(echo ${#ADDR[*]})
     n=$(($n - 1))
+    # echo $n
     run_commands $1 $n
     run_options $2 $n
 }
@@ -150,7 +155,6 @@ include "shelp/index"
 ### CLASS FUNCTIONALITY
 
 JSON commands new
-JSON commands put "build" "cmd/build"
 JSON commands put "link" "cmd/link"
 JSON commands put "unlink" "cmd/unlink"
 JSON commands put "publish" "cmd/publish"
@@ -158,13 +162,17 @@ JSON commands put "clean" "cmd/clean"
 JSON commands put "repo" "cmd/repo/index"
 JSON commands put "install" "cmd/install"
 JSON commands put "uninstall" "cmd/uninstall"
+JSON commands put "build" "cmd/build/index"
 
 JSON options new
 JSON options put "-h" "_help"
 JSON options put "--help" "_help"
+JSON options put '--help' '_help'
+# JSON options put "algo" "gos"
 JSON options put "-v" "_version"
 JSON options put "--version" "_version_large"
-
+# JSON options keys
+# JSON options values
 _version() {
     sconsole "$VERSION"
     exit 0
@@ -186,6 +194,6 @@ _help() {
     exit 0
 }
 
-export_module commands options
-
 # _printenv
+
+export_module commands options

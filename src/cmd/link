@@ -4,6 +4,8 @@ JSON commands new
 JSON options new
 export_module commands options
 
+_require_sudo $*
+
 sfproject=($(_is_sfs_project "$PWD"))
 sfp_path="$PWD"
 sfp_name=${sfproject[0]}
@@ -15,15 +17,27 @@ sfp_version=${sfproject[1]}
 # COMPILE_FOLDER="target"
 # INSTALATION_PATH="/opt"
 
-src_path="$PWD/src"
-ln -s "$src_path" "$INSTALATION_PATH/$sfp_name"
 
+src_path="$PWD/src"
+rm -fr "$INSTALATION_PATH/$sfp_name" &>/dev/null
+ln -s "$src_path" "$INSTALATION_PATH/$sfp_name"
+sconsole -g "link $src_path  >  $INSTALATION_PATH/$sfp_name"
 name_temporal="$INSTALATION_PATH/${sfp_name}/${sfp_name}___link___"
 cat >"$name_temporal" <<EOF
 #!/usr/bin/env bash
 source "$INSTALATION_PATH/$sfp_name/$sfp_name" \$@
 EOF
 chmod +x $name_temporal
-ln -s $name_temporal $BIN_PATH/$sfp_name
+
+if [ ! -w "$(dirname "$BIN_PATH")" ]; then
+    rm -fr "$BIN_LOCAL_PATH/$sfp_name" &>/dev/null
+    ln -s $name_temporal $BIN_LOCAL_PATH/$sfp_name
+    sconsole -g "link $name_temporal  > $BIN_LOCAL_PATH/$sfp_name"
+else
+    rm -fr "$BIN_PATH/$sfp_name" &>/dev/null
+    ln -s $name_temporal $BIN_PATH/$sfp_name
+    sconsole -g "link $name_temporal  >  $BIN_PATH/$sfp_name"
+
+fi
 
 sconsole -a "Link succeded"

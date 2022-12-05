@@ -3,6 +3,8 @@
 JSON commands new
 JSON options new
 
+_require_sudo $*
+
 export_module commands options
 
 # sfproject=($(_is_sfs_project $PWD))
@@ -63,4 +65,4 @@ curl -O -# $url_to_download_installer
 chmod +x $name_installer
 /bin/bash $name_installer
 rm $name_installer
-sconsole -a "El paquete fue instalado con exito."
+# sconsole -a "El paquete fue instalado con exito."

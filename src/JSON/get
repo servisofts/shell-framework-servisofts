@@ -1,0 +1,20 @@
+#!/bin/bash
+
+_exist "name" $1
+_exist "key" $3
+
+name=$1
+key=$3
+
+arr=($(JSON $name spread))
+
+for row in ${arr[@]}; do
+    k="$(cut -d ':' -f 1 <<<"$row")"
+    # echo $k
+    if [ "$k" == "$key" ]; then
+        v=$(echo $row | rev | grep -o '.*:' | rev | sed 's/^://')
+        v=$(_decode $v)
+        echo "$v"
+    fi
+
+done

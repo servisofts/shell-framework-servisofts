@@ -1,0 +1,28 @@
+#!/bin/bash
+
+_exist "name" $1
+_exist "key" $3
+_exist "value" $4
+
+name=$1
+key=$3
+value=${@:4}
+value=$(_encode $value)
+# sconsole -g "put=" $value
+
+arr=($(JSON $name spread))
+arrfinal=""
+
+for row in ${arr[*]}; do
+    k="$(cut -d ':' -f 1 <<<"$row")"
+    if [[ ! $k = $key ]]; then
+        arrfinal="$arrfinal $row"
+        continue
+    fi
+
+done
+
+arrfinal="$arrfinal $key:$value"
+paramtosend=${arrfinal[*]}
+str=($(JSON $name unspread $paramtosend))
+export "$name=$str"

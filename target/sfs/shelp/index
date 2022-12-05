@@ -44,3 +44,5 @@ _paint_in_line() {
     printf '%b' "\e${Clean}"
     printf "%-${size}s\n" "$2"
 }
+
+

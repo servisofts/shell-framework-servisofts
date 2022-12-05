@@ -4,6 +4,8 @@ JSON commands new
 JSON options new
 export_module commands options
 
+_require_sudo $*
+
 sfproject=($(_is_sfs_project $PWD))
 sfp_path="$PWD"
 sfp_name=${sfproject[0]}
@@ -23,8 +25,20 @@ NAME=$sfp_name
 VERSION=$sfp_version
 PATH_TO_INSTALL=$INSTALATION_PATH
 BIN_PATH=$BIN_PATH
+BIN_LOCAL_PATH=$BIN_LOCAL_PATH
 REPOSITORY=$REPOSITORY
 NAME_TGZ="\$NAME-\$VERSION.tgz"
+
+
+if [[ \$UID != 0 ]]; then
+    echo "Please run this script with sudo:"
+    exit 1
+fi
+
+if [ ! -w "$(dirname "$BIN_PATH")" ]; then
+    BIN_PATH=$BIN_LOCAL_PATH
+fi
+
 
 curl -o "\$PATH_TO_INSTALL/\$NAME_TGZ" https://repo.servisofts.com/opt/\$NAME/\$VERSION/\$NAME_TGZ
 cd \$PATH_TO_INSTALL
@@ -42,7 +56,7 @@ EOF
 chmod +x \$name_temporal
 ln -s \$name_temporal \$BIN_PATH/\$NAME
 
-echo "\$NAME installed successfuly!"
+echo "\$NAME@\$VERSION installed successfuly!"
 EOT
 
 chmod +x $destino_installer

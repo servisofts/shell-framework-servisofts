@@ -4,6 +4,8 @@ JSON commands new
 JSON options new
 export_module commands options
 
+_require_sudo $*
+
 package=${PARAMS[1]}
 
 include "cmd/repo/index"
