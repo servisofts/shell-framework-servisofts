@@ -11,3 +11,8 @@ du -shc *
 comando
 # Descripcion del comando
 ```
+
+```bash
+comando
+# Descripcion del comando
+```
