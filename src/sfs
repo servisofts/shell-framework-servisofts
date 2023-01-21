@@ -69,7 +69,7 @@ run_options() {
     # cantidad_parametros=$((${#PARAMS[@]} - $pos))
     local array_keys=$(JSON ${1} keys)
 
-    local BRANCH_REGEX="-(.*)?\{"
+    local BRANCH_REGEX="-(.*)?#"
 
     local pending=""
     local pending_params=()
@@ -96,12 +96,12 @@ run_options() {
 
             command=" "
             # echo "$key"
-            # echo "$value"
+            
+            # echo "$_key"
 
             if [[ $_key =~ $BRANCH_REGEX ]]; then
-
-                command=$(echo $_key | perl -nle "m/(.*)?[{]/; print \$1; ")
-                file=$(echo $_key | perl -nle "m/.*?[{](.*)?[}]/; print \$1; ")
+                command=$(echo $_key | perl -nle "m/(.*)?[#]/; print \$1; ")
+                file=$(echo $_key | perl -nle "m/.*?[#](.*)?/; print \$1; ")
             fi
             if [[ $param = $_key ]]; then
 

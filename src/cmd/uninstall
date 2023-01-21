@@ -10,8 +10,8 @@ package=${PARAMS[1]}
 
 include "cmd/repo/index"
 
-if [ ! -s $package ]; then
-    path_to_package=($(type -a $package))
+if [ ! -z $package ]; then
+    path_to_package=$(type -a $package)
     if [ ! -s "$path_to_package" ]; then
         repo_path=$(_repo_find $package)
         if [ -s $repo_path ]; then
@@ -22,6 +22,8 @@ if [ ! -s $package ]; then
         rm -fr "/opt/$package"
         sconsole -a "El paquete fue borrado con exito."
     fi
+else
+    sconsole -e "Debe ingresar el nombre del paquete"
 fi
 
 # rm -fr "$BIN_PATH/$sfp_name"

@@ -34,9 +34,9 @@ if [ -s $repo_path ]; then
 fi
 
 if [ $version_to_install = "latest" ]; then
-    package_vesions=($(_repo_list /$package_to_install/ | grep -s "$version_to_install" || :))
+    package_vesions=($(_repo_list /opt/$package_to_install | grep -s "$version_to_install" || :))
 else
-    package_vesions=($(_repo_list /$package_to_install/$version_to_install/ | grep -s "$version_to_install" || :))
+    package_vesions=($(_repo_list /opt/$package_to_install/$version_to_install/ | grep -s "$version_to_install" || :))
 fi
 
 if [ -s $package_vesions ]; then
