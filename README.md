@@ -22,10 +22,40 @@
 # INSTALL
 
 ## Estandar
+Required curl for this install.
 
 ```bash
 cd /opt/ && sudo curl -O https://repo.servisofts.com/opt/sfs/sfs-latest.installer && sudo bash sfs-latest.installer
 ```
+
+
+```bash
+rickypazd@Ricardos-MacBook-Pro ~ % sfs -h
+Usage: sfs  [OPTIONS] [COMMANDS].
+
+Options:
+  -h                Muestra la ayuda.
+  --help            Muestra la ayuda.
+  -v                Muestra la version de sfs.
+  --version         Muestra la version detallada de sfs.
+
+Commands:
+  link              Crea un link simbolico de del proyecto en el que nos encontramos.
+  unlink            --
+  publish           --
+  clean             Limpiar los archivos de compilacion.
+  repo              --
+  install           Instala un packete sfs desde el repositorio.
+  uninstall         --
+  build             Compila el proyecto encontrado en la ruta que nos encontramos.
+  create            Crea un nuevo projecto en el directorio donde nos encontramos.
+
+Run 'sfs COMMAND --help' for more information on a command.
+```
+
+
+
+
 
 ## Docker
 ```dockerfile
@@ -61,4 +91,24 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 Install shc.
 
 brew install shc
+```
+
+
+
+
+# DEVELOP
+
+1. Download repository from `https://github.com/servisofts/shell-framework-servisofts`;
+2. Verificar la ayuda.
+```bash
+./src/sfs -h
+```
+3. Para instalar el codigo con un sinLink y poder desarrollar.
+```bash
+sudo ./src/sfs link
+
+```
+1. Para desinstalar el sinLink.
+```bash
+sudo ./src/sfs unlink
 ```

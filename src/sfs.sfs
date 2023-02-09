@@ -1,4 +1,4 @@
-VERSION=1.1.1
+VERSION=1.1.2
 BIN_PATH="/usr/bin"
 BIN_LOCAL_PATH="/usr/local/bin"
 COMPILE_FOLDER="target"
